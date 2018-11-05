@@ -4,6 +4,7 @@ package logutils
 import (
 	"bytes"
 	"io"
+	"os"
 	"sync"
 )
 
@@ -28,6 +29,8 @@ type LevelFilter struct {
 
 	badLevels map[LogLevel]struct{}
 	once      sync.Once
+
+	FilePath string
 }
 
 // Check will check a given line if it would be included in the level
@@ -55,6 +58,14 @@ func (f *LevelFilter) Write(p []byte) (n int, err error) {
 	// get a single line. We use that as a slight optimization within
 	// this method, assuming we're dealing with a single, complete line
 	// of log data.
+
+	//to file print it all
+	file, err := os.OpenFile(f.FilePath, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	if err != nil {
+	    return len(p), err
+	}
+	defer file.Close()
+	file.Write(p)
 
 	if !f.Check(p) {
 		return len(p), nil
