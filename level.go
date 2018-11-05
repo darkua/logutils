@@ -59,14 +59,16 @@ func (f *LevelFilter) Write(p []byte) (n int, err error) {
 	// this method, assuming we're dealing with a single, complete line
 	// of log data.
 
-	//to file print it all
-	file, err := os.OpenFile(f.FilePath, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
-	if err != nil {
-	    return len(p), err
+	//if set log everything to file
+	if(f.FilePath != ""){
+		file, err := os.OpenFile(f.FilePath, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+		if err != nil {
+		    return len(p), err
+		}
+		defer file.Close()
+		file.Write(p)	
 	}
-	defer file.Close()
-	file.Write(p)
-
+	
 	if !f.Check(p) {
 		return len(p), nil
 	}
