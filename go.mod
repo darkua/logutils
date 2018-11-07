@@ -1,1 +1,1 @@
-module github.com/hashicorp/logutils
+module github.com/darkua/logutils
